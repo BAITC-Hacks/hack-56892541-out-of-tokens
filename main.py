@@ -150,40 +150,51 @@ def load_faq(filepath: Path) -> dict[str, str]:
     return faq_answers
 
 
-def score_topic(normalized_text: str, topic: str) -> float:
-    """Calculate relevance score for a given topic."""
+def score_topic(normalized_text: str, topic: str) -> tuple[float, int]:
+    """Calculate relevance score and number of strong matches."""
     config = TOPIC_KEYWORDS.get(topic, {})
     strong_patterns = config.get("strong", [])
     weak_patterns = config.get("weak", [])
 
     score = 0.0
+    strong_matches = 0
+
     for pat in strong_patterns:
         matches = re.findall(pat, normalized_text)
+        strong_matches += len(matches)
         score += len(matches) * 2.0
 
     for pat in weak_patterns:
         matches = re.findall(pat, normalized_text)
         score += len(matches) * 1.0
 
-    return score
+    return score, strong_matches
 
 
 def find_best_answer(query: str, faq_answers: dict[str, str]) -> str:
     """Find the closest FAQ answer or return 'не знаю'."""
     normalized = normalize(query)
+
     if not normalized.strip():
         return "не знаю"
 
     best_topic = None
     best_score = 0.0
+    best_strong_matches = 0
 
     for topic in TOPIC_ORDER:
-        score = score_topic(normalized, topic)
+        score, strong_matches = score_topic(normalized, topic)
+
         if score > best_score:
             best_score = score
             best_topic = topic
+            best_strong_matches = strong_matches
 
-    if best_score > 0 and best_topic and best_topic in faq_answers:
+    if (
+        best_topic
+        and best_topic in faq_answers
+        and best_strong_matches > 0
+    ):
         return faq_answers[best_topic]
 
     return "не знаю"
