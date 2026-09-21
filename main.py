@@ -2,6 +2,12 @@ import re
 import sys
 from pathlib import Path
 
+# Ensure UTF-8 I/O across platforms (especially Windows consoles/pipes)
+if hasattr(sys.stdin, "reconfigure"):
+    sys.stdin.reconfigure(encoding="utf-8")
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
+
 TOPIC_KEYWORDS = {
     "TIME": {
         "strong": [
