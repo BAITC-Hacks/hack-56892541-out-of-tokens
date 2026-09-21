@@ -6,7 +6,7 @@ Interactive terminal FAQ chatbot developed for HackAlem AI Closed Rehearsal #3 (
 
 1. **Input Normalization:** Lowercases the user input, replaces `ё` with `е`, and removes punctuation.
 2. **Topic Scoring:** Computes relevance scores across the 5 predefined FAQ topics using weighted keyword and stem matching.
-3. **Answer Retrieval:** Answers are loaded dynamically from `faq.txt` (never hardcoded in Python). The entry with the highest positive score is returned.
+3. **Answer Retrieval:** Answers are loaded dynamically from `faq.txt` (never hardcoded in Python). The highest-scoring topic with at least one strong keyword match is returned. Fallback: If no strong topic keyword matches, the bot prints `не знаю`.
 4. **Fallback:** If no meaningful topic keywords match, the bot prints `не знаю`.
 
 ## Requirements
